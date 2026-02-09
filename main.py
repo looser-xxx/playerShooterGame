@@ -37,11 +37,11 @@ class Game:
         self.runGame = True
         self.clock = pygame.time.Clock()
         self.loadImages()
-        self.map = load_pygame("./data/maps/world.tmx")
+        self.map = load_pygame(resource_path("data/maps/world.tmx"))
         self.setUpEnemy()
 
     def loadImages(self):
-        self.bulletSurf = pygame.image.load("./images/gun/bullet.png").convert_alpha()
+        self.bulletSurf = pygame.image.load(resource_path("images/gun/bullet.png")).convert_alpha()
 
     def setUpPlayer(self, pos):
         self.playerSpeed = 400
@@ -113,7 +113,7 @@ class Game:
             self.runGame = False
 
     def setUpMap(self):
-        map = load_pygame("./data/maps/world.tmx")
+        map = load_pygame(resource_path("data/maps/world.tmx"))
         for x, y, image in map.get_layer_by_name("Ground").tiles():
             Sprite(self.allSprites, (x * tileSize, y * tileSize), image)
         for obj in map.get_layer_by_name("Objects"):

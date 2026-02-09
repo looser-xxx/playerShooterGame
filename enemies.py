@@ -38,7 +38,7 @@ class Enemy(pygame.sprite.Sprite):
         self.frames = {"bat": [], "blob": [], "skeleton": []}
         for enemy in self.frames.keys():
             for folderPath, subFolder, fileNames in walk(
-                join("images", "enemies", enemy)
+                resource_path(join("images", "enemies", enemy))
             ):
                 if fileNames:
                     for fileName in sorted(

@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__(groups)
         self.loadImages()
         self.state, self.frameIndex = "down", 0
-        self.image = pygame.image.load("./images/player/down/0.png")
+        self.image = pygame.image.load(resource_path("images/player/down/0.png"))
         self.rect = self.image.get_frect(center=pos)
         self.hitbox = self.rect.inflate(-90, -30)
         self.speed = speed
@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         }
         for state in self.frames.keys():
             for folderPath, subFolder, fileNames in walk(
-                join("images", "player", state)
+                resource_path(join("images", "player", state))
             ):
                 if fileNames:
                     for fileName in sorted(

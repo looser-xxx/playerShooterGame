@@ -28,7 +28,7 @@ class Gun(pygame.sprite.Sprite):
         self.playerDirection = pygame.Vector2(0, 1)
 
         super().__init__(groups)
-        self.gunSurf = pygame.image.load("./images/gun/gun.png").convert_alpha()
+        self.gunSurf = pygame.image.load(resource_path("images/gun/gun.png")).convert_alpha()
         self.image = self.gunSurf
         self.rect = self.image.get_frect(
             center=self.player.rect.center + self.playerDirection * self.distance
