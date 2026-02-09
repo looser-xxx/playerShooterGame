@@ -1,9 +1,9 @@
 import random
 from enum import Flag
 
-from pygame import FLASH_BRIEFLY, key
 from pytmx.util_pygame import load_pygame
 
+from enemies import Bat, Blob, Skeleton
 from groups import AllSprites
 from player import Player
 from settings import *
@@ -20,7 +20,7 @@ def loadAfterCooldown(eventTime, delay) -> bool:
 
     Returns:
         bool: True if the cooldown has passed, False otherwise.
-    ""a
+    """
     if (eventTime + delay) < pygame.time.get_ticks():
         return True
     else:
@@ -37,6 +37,8 @@ class Game:
         self.runGame = True
         self.clock = pygame.time.Clock()
         self.loadImages()
+        self.map = load_pygame("./data/maps/world.tmx")
+        self.setUpEnemy()
 
     def loadImages(self):
         self.bulletSurf = pygame.image.load("./images/gun/bullet.png").convert_alpha()
@@ -55,6 +57,47 @@ class Game:
         self.shootDealy = 100
         self.bulletSprite = pygame.sprite.Group()
 
+    def setUpEnemy(self):
+        self.toSpawnEnemy = True
+        self.enemySpawnDelay = 200
+        self.enemySpawnTime = 0
+        self.enemyPos = []
+        self.enemyIndex = 1
+        for obj in self.map.get_layer_by_name("Entities"):
+            if obj.name == "Enemy":
+                self.enemyPos.append((obj.x, obj.y))
+
+    def spawnEnemy(self):
+        if self.toSpawnEnemy:
+            match self.enemyIndex:
+                case 1:
+                    Bat(
+                        self.allSprites,
+                        random.choice(self.enemyPos),
+                        self.player,
+                    )
+                    self.enemyIndex = 2
+                case 2:
+                    Blob(
+                        self.allSprites,
+                        random.choice(self.enemyPos),
+                        self.player,
+                    )
+                    self.enemyIndex = 3
+                case 3:
+                    Skeleton(
+                        self.allSprites,
+                        random.choice(self.enemyPos),
+                        self.player,
+                    )
+                    self.enemyIndex = 1
+            self.toSpawnEnemy = False
+            self.enemySpawnTime = pygame.time.get_ticks()
+        else:
+            self.toSpawnEnemy = loadAfterCooldown(
+                self.enemySpawnTime, self.enemySpawnDelay
+            )
+
     def checkEvents(self) -> None:
         """
         Handle all user input and system events.
@@ -70,9 +113,7 @@ class Game:
         for x, y, image in map.get_layer_by_name("Ground").tiles():
             Sprite(self.allSprites, (x * tileSize, y * tileSize), image)
         for obj in map.get_layer_by_name("Objects"):
-            CollisionSprite(
-                (self.allSprites, self.collisionSprites), (obj.x, obj.y), obj.image
-            )
+            CollisionSprite((self.allSprites), (obj.x, obj.y), obj.image)
         for obj in map.get_layer_by_name("Collisions"):
             CollisionSprite(
                 self.collisionSprites,
@@ -100,6 +141,9 @@ class Game:
         else:
             self.canShoot = loadAfterCooldown(self.shootTime, self.shootDealy)
 
+    def updates(self):
+        self.spawnEnemy()
+
     def run(self) -> None:
         """
         The main game loop.
@@ -109,6 +153,7 @@ class Game:
             self.checkEvents()
             self.screen.fill("#212326")
             self.allSprites.update(self.dt)
+            self.updates()
             self.allSprites.draw(self.player.rect.center)
             pygame.display.flip()
 
