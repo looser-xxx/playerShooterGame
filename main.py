@@ -59,34 +59,35 @@ class Game:
 
     def setUpEnemy(self):
         self.toSpawnEnemy = True
-        self.enemySpawnDelay = 200
+        self.enemySpawnDelay = 1000
         self.enemySpawnTime = 0
         self.enemyPos = []
         self.enemyIndex = 1
         for obj in self.map.get_layer_by_name("Entities"):
             if obj.name == "Enemy":
                 self.enemyPos.append((obj.x, obj.y))
+        self.enemySprites = pygame.sprite.Group()
 
     def spawnEnemy(self):
         if self.toSpawnEnemy:
             match self.enemyIndex:
                 case 1:
                     Bat(
-                        self.allSprites,
+                        (self.allSprites, self.enemySprites),
                         random.choice(self.enemyPos),
                         self.player,
                     )
                     self.enemyIndex = 2
                 case 2:
                     Blob(
-                        self.allSprites,
+                        (self.allSprites, self.enemySprites),
                         random.choice(self.enemyPos),
                         self.player,
                     )
                     self.enemyIndex = 3
                 case 3:
                     Skeleton(
-                        self.allSprites,
+                        (self.allSprites, self.enemySprites),
                         random.choice(self.enemyPos),
                         self.player,
                     )
@@ -107,6 +108,9 @@ class Game:
                 self.runGame = False
 
         self.keyboardInput()
+        print(self.player.hp)
+        if self.player.hp <= 0:
+            self.runGame = False
 
     def setUpMap(self):
         map = load_pygame("./data/maps/world.tmx")
@@ -126,7 +130,6 @@ class Game:
 
     def keyboardInput(self) -> None:
 
-        keys = pygame.key.get_pressed()
         if pygame.mouse.get_pressed()[0] and self.canShoot:
             pos = self.gun.rect.center + self.gun.playerDirection * 50
 
@@ -153,6 +156,11 @@ class Game:
             self.checkEvents()
             self.screen.fill("#212326")
             self.allSprites.update(self.dt)
+
+            hits = pygame.sprite.groupcollide(
+                self.bulletSprite, self.enemySprites, True, True
+            )
+
             self.updates()
             self.allSprites.draw(self.player.rect.center)
             pygame.display.flip()

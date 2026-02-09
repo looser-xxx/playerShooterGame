@@ -12,6 +12,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = speed
         self.direction = pygame.Vector2()
         self.collisionSprites = collisionSprites
+        self.hp = 100
 
     def loadImages(self):
         self.frames = {

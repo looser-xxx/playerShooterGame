@@ -24,7 +24,7 @@ class CollisionSprite(pygame.sprite.Sprite):
 class Gun(pygame.sprite.Sprite):
     def __init__(self, groups, player) -> None:
         self.player = player
-        self.distance = 140
+        self.distance = 40
         self.playerDirection = pygame.Vector2(0, 1)
 
         super().__init__(groups)

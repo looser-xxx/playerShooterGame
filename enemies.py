@@ -24,16 +24,15 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.direction = pygame.Vector2(0, 0)
 
-    def die(self):
-        if self.rect.colliderect(self.player.rect):
-            print("collide")
-            self.kill()
-
     def update(self, dt):
         self.getDirection()
         self.animate(dt)
         self.move(dt)
-        self.die()
+        self.damage(dt)
+
+    def damage(self, dt):
+        if self.rect.colliderect(self.player.rect):
+            self.player.hp -= 50 * dt
 
     def loadImages(self):
         self.frames = {"bat": [], "blob": [], "skeleton": []}
@@ -65,7 +64,7 @@ class Bat(Enemy):
         super().__init__(group)
         self.loadImages()
         self.rect = self.image.get_frect(center=pos)
-        self.speed = 400
+        self.speed = 300
         self.pos = pygame.Vector2(self.rect.center)
         self.player = player
         self.getEnemyType("bat")
@@ -76,7 +75,7 @@ class Blob(Enemy):
         super().__init__(group)
         self.loadImages()
         self.rect = self.image.get_frect(center=pos)
-        self.speed = 400
+        self.speed = 200
         self.pos = pygame.Vector2(self.rect.center)
         self.player = player
         self.getEnemyType("blob")
@@ -87,7 +86,7 @@ class Skeleton(Enemy):
         super().__init__(group)
         self.loadImages()
         self.rect = self.image.get_frect(center=pos)
-        self.speed = 400
+        self.speed = 150
         self.pos = pygame.Vector2(self.rect.center)
         self.player = player
         self.getEnemyType("skeleton")
