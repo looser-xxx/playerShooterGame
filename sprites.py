@@ -36,7 +36,7 @@ class Gun(pygame.sprite.Sprite):
 
     def getDirection(self):
         mousePos = pygame.Vector2(pygame.mouse.get_pos())
-        playerPos = pygame.Vector2(window[0] / 2, window[1] / 2)
+        playerPos = pygame.Vector2(windowCenter)
         self.playerDirection = (mousePos - playerPos).normalize()
 
     def rotateGun(self):
@@ -62,11 +62,11 @@ class Bullets(pygame.sprite.Sprite):
         self.image = self.surf
         self.rect = self.image.get_frect(center=pos)
         self.direction = direction
-        self.speed = 1000
+        self.speed = 1750
         self.rotationSpeed = 200
         self.angle = random.randint(0, 360)
         self.spawnTime = pygame.time.get_ticks()
-        self.lifeTime = 1000
+        self.lifeTime = 1500
 
     def move(self, dt):
         self.rect.center += self.speed * dt * self.direction
@@ -80,4 +80,3 @@ class Bullets(pygame.sprite.Sprite):
         self.rotate(dt)
         if pygame.time.get_ticks() > self.spawnTime + 1000:
             self.kill()
-            print("hello")
